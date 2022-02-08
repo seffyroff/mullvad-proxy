@@ -1,32 +1,61 @@
 version: "3.3"
 services:
-  mullvad:
-    build: mullvad/.
-    image: "mullvad:latest"
-    container_name: mvpn
+  # mullvad:
+  #   build: mullvad/.
+  #   image: "mullvad:latest"
+  #   container_name: mvpn
+  #   # entrypoint: /bin/bash
+  #   cap_add:
+  #     - NET_ADMIN
+  #     - SYS_MODULE
+  #   sysctls:
+  #     - net.ipv4.conf.all.src_valid_mark=1
+  #   restart: "no"
+  #   privileged: true
+  #   ports:
+  #     - ${HTTP_PORT:-8118}:8118
+  #     - ${SOCKS5_PORT:-1080}:1080
+  wireguard:
+    image: lscr.io/linuxserver/wireguard
+    container_name: wireguard
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
-    sysctls:
-      net.ipv4.conf.all.src_valid_mark: 1
-    restart: unless-stopped
-    privileged: true
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Vancouver
+      - VIRTUAL_HOST=proxy
+      - VIRTUAL_PORT=8118
+      - VIRTUAL_PORT=1080
+      # - SERVERURL=wireguard.domain.com #optional
+      # - SERVERPORT=51820 #optional
+      # - PEERS=1 #optional
+      # - PEERDNS=auto #optional
+      # - INTERNAL_SUBNET=10.13.13.0 #optional
+      # - ALLOWEDIPS=0.0.0.0/0 #optional
+    volumes:
+      - ./config:/config
+      - /lib/modules:/lib/modules
     ports:
+      - 51820:51820/udp
       - ${HTTP_PORT:-8118}:8118
       - ${SOCKS5_PORT:-1080}:1080
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
   privoxy:
     image: "caligari/privoxy:latest"
     container_name: mvpn-http
     restart: unless-stopped
-    network_mode: service:mullvad
+    network_mode: service:wireguard
     depends_on:
-      - mullvad
+      - wireguard
   nginx:
     build: nginx/.
     image: mvpn-nginx
     container_name: mvpn-socks5
     restart: unless-stopped
-    network_mode: service:mullvad
+    network_mode: service:wireguard
     depends_on:
-      - mullvad
-    
+      - wireguard
