@@ -1,3 +1,7 @@
+# FORK NOTICE
+
+This fork removes the locally built mullvad client container, as in my experience, it doesn't work in Docker.  I've replaced this with linuxserver/wireguard, which needs a wg0.conf file from your Mullvad account config page placed in ./config/.
+
 # Mullvad VPN HTTP and SOCKS5 Proxy using Docker
 
 This docker compose setup runs the [Mullvad VPN app](https://mullvad.net/en/download/linux/) inside a docker container and exposes an HTTP proxy using privoxy (port 8118) and SOCKS5 proxy using nginx (port 1080). The Mullvad CLI can still be used to control the application.
@@ -26,19 +30,9 @@ SOCKS5_PORT=1080
 Once the above is setup, run the following to get the proxy servers up and running:
 
 ```bash
-git clone https://github.com/bernardko/mullvad-proxy.git
+git clone https://github.com/seffyroff/mullvad-proxy.git
 cd mullvad-proxy
-./setup.sh <Mullvad Account Number>
+docker-compose up
 ```
 
 The setup.sh script runs `docker-compose up -d` to setup Mullvad VPN and proxy docker  containers with container networking and then runs several Mullvad VPN CLI commands to setup the app with the account number and connects to the VPN. The containers are configured to auto restart and will be available whenever your machine starts as long as docker is running.
-
-## Use Mullvad CLI
-
-All [Mullvad CLI](https://mullvad.net/en/help/how-use-mullvad-cli/) commands can be used to control the Mullvad app.
-
-For example, to change VPN location, use the following Mullvad CLI command through docker exec:
-
-```bash
-docker exec -it mvpn mullvad relay set location us
-```
