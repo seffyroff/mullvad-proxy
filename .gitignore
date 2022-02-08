@@ -1,1 +1,7 @@
 .env
+mullvad-proxy.code-workspace
+config/wg0.conf
+config/coredns/Corefile
+config/templates/peer.conf
+.gitignore
+config/templates/server.conf
