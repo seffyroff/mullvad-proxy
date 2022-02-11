@@ -1,20 +1,5 @@
 version: "3.3"
 services:
-  # mullvad:
-  #   build: mullvad/.
-  #   image: "mullvad:latest"
-  #   container_name: mvpn
-  #   # entrypoint: /bin/bash
-  #   cap_add:
-  #     - NET_ADMIN
-  #     - SYS_MODULE
-  #   sysctls:
-  #     - net.ipv4.conf.all.src_valid_mark=1
-  #   restart: "no"
-  #   privileged: true
-  #   ports:
-  #     - ${HTTP_PORT:-8118}:8118
-  #     - ${SOCKS5_PORT:-1080}:1080
   wireguard:
     image: lscr.io/linuxserver/wireguard
     container_name: wireguard
@@ -28,12 +13,6 @@ services:
       - VIRTUAL_HOST=proxy
       - VIRTUAL_PORT=8118
       - VIRTUAL_PORT=1080
-      # - SERVERURL=wireguard.domain.com #optional
-      # - SERVERPORT=51820 #optional
-      # - PEERS=1 #optional
-      # - PEERDNS=auto #optional
-      # - INTERNAL_SUBNET=10.13.13.0 #optional
-      # - ALLOWEDIPS=0.0.0.0/0 #optional
     volumes:
       - ./config:/config:z
       - /lib/modules:/lib/modules

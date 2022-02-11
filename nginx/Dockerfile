@@ -1,5 +1,5 @@
 FROM nginx:mainline-alpine
 
-LABEL maintainer="Bernard Ko <bernardko@gmail.com>"
+LABEL maintainer="Phil Merricks <seffyroff@gmail.com>"
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
